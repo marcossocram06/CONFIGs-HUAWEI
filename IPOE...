@@ -1,0 +1,65 @@
+
+
+#
+dhcpv6 duid 00010001b6eb2b6c28a6dbeb0029
+
+radius-server group isp
+ radius-server shared-key-cipher %^%#EGiA1wr#mTZwG!ZJAI`Tpk<jJ[%S+YAas!R_O-B=%^%#    
+ radius-server authentication ip_radius_A 1812 weight 100
+ radius-server authentication ip_radius_B 1812 weight 0
+ radius-server accounting ip_radius_B 1813 weight 0
+ radius-server accounting ip_radius_a 1813 weight 100
+ radius-server source interface LoopBack0  
+ undo radius-server user-name domain-included
+ radius-attribute case-sensitive qos-profile-name
+#
+
+
+aaa
+ acct-session-id-version version3
+ default-password template ipoe cipher %^%#;#jRC"N3m6*Pi9M-N7,7IChyD_p*%;D-6P&MuN*)%^%#
+ default-user-name template ipoe include option82 
+ 
+ 
+  authentication-scheme auth1
+  authentication-mode local radius
+ #
+  accounting-scheme acct1
+  accounting interim interval 15 
+ #
+ 
+ domain isp.com.br
+  authentication-scheme auth1
+  accounting-scheme acct1
+  radius-server group isp
+  dns primary-ip 1.1.1.1
+  dns second-ip 8.8.8.8
+  ppp address-release separate
+ #
+ 
+ 
+
+  
+interface Eth-Trunk0.2
+ description IPOE_CLIENTES
+ ipv6 enable
+ ipv6 address auto link-local
+ statistic enable
+ traffic-policy POL_PBR_CGNAT inbound 
+ user-vlan 209
+ user-vlan 404
+ user-vlan 499
+ user-vlan 918
+ user-vlan 2802
+ ipv6 nd autoconfig managed-address-flag
+ ipv6 nd autoconfig other-flag
+ bas
+ #
+  access-type layer2-subscriber default-domain authentication replace isp.com.br
+  client-option82
+  authentication-method bind
+  authentication-method-ipv6 bind
+  default-user-name-template ipoe
+  default-password-template ipoe
+ #
+#
